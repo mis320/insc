@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        textarea {
+            resize: none
+        }
+
+        textarea::placeholder {
+            border-color: rgb(7, 7, 7);
+        }
+
+        body {
+            text-align: center
+        }
+
+        .myButton {
+            background-color: #ededed;
+            border-radius: 28px;
+            border: 1px solid #dcdcdc;
+            display: inline-block;
+            cursor: pointer;
+            color: #777777;
+            font-family: Arial;
+            font-size: 10px;
+            padding: 11px 76px;
+            text-decoration: none;
+            text-shadow: -1px -1px 0px #ffffff;
+        }
+
+        .myButton:hover {
+            background-color: #dfdfdf;
+        }
+
+        .myButton:active {
+            position: relative;
+            top: 1px;
+        }
+    </style>
+
+    <script src="./web3/web3.min.js"></script>
+    <script src="./utils/utils.js"></script>
+    <script src="./utils/start.js"></script>
+</head>
+
+<body>
+    <span>GasPrice:</span>
+    <div style="display: none" id="gasPriceDIV"><textarea placeholder="固定gas费" name="" id="gasPrice" cols="80"
+            rows="2"></textarea></div>
+
+    <div style="display: none" id="minGasPriceDIV"><textarea placeholder="最小gas费" name="" id="minGasPrice" cols="80"
+            rows="2"></textarea>
+    </div>
+    <div style="display: none" id="maxGasPriceDIV"><textarea placeholder="最大gas费" name="" id="maxGasPrice" cols="80"
+            rows="2"></textarea>
+    </div>
+    <span>to:</span>
+    <div id=""><textarea name="" id="to" cols="80" rows="2"></textarea></div>
+    <span>次数:</span>
+    <div id=""><textarea name="" id="num" cols="80" rows="2">1</textarea></div>
+    <span>data:</span>
+    <div id=""><textarea name="" id="data" cols="80" rows="10">0x</textarea></div>
+    <span>fee:</span>
+    <div id=""><textarea name="" id="fee" cols="80" rows="2">0</textarea></div>
+    <span>私钥:</span>
+    <div id=""><textarea name="" id="keys" cols="80" rows="10"></textarea></div>
+    <br>
+    <span>结果:</span>
+    <div id=""><textarea name="" id="res" cols="80" rows="20"></textarea></div>
+    <br>
+    <div><a class="myButton" onclick="start()">批量执行</a></div>
+</body>
+
+
+
+<script>
+    var G_res = document.getElementById('res')
+    var globalWeb3
+    var web3
+    var gasPrice
+    async function init(params) {
+        var web3Provider
+        while (true) {
+            if (window.ethereum !== undefined) {
+                console.log("window.ethereum", window.ethereum);
+                web3Provider = window.ethereum
+
+                console.log('web3Provider Wallet is installed!');
+            }
+            if (window.ethereum !== undefined && web3Provider !== undefined) {
+                //console.log("window.ethereum", web3Provider);
+                break
+            }
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        //web3Provider = "https://data-seed-prebsc-1-s2.binance.org:8545"
+        globalWeb3 = new Web3(web3Provider);
+        web3 = new Web3(web3Provider);
+        const gasPrice0 = await web3.eth.getGasPrice()
+        gasPrice = globalWeb3.utils.fromWei(gasPrice0, 'gwei')
+        setGasPrice(gasPrice)
+        setMaxGasPrice(parseInt(gasPrice * 1.5))
+        setMinGasPrice(parseInt(gasPrice / 3))
+        console.log(gasPrice);
+        var init = document.getElementById("to");
+        var init2 = document.getElementById("data");
+        init.value = get('transferTo');
+        init2.value = get('transferData');
+        //test1()
+    }
+
+    async function test1() {
+        console.log("test");
+        console.log(globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest'));
+
+        var batch = new globalWeb3.BatchRequest();
+        batch.add(globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest'));
+        batch.add(globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest'));
+        batch.add(globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest'));
+        batch.add(globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest'));
+        batch.add(globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest'));
+        batch.add(globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest'));
+        batch.add(globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest'));
+        batch.add(globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest'));
+        batch.execute();
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        init()
+        displayGasPrice()
+
+        console.log('页面加载完毕！');
+    });
+</script>
+
+<script>
+
+    let tempChainId
+    async function displayGasPrice() {
+        let gasPriceUl = document.getElementById("gasPriceDIV");
+        let maxGasPriceUl = document.getElementById("maxGasPriceDIV");
+        let minGasPriceUl = document.getElementById("minGasPriceDIV");
+
+        while (true) {
+
+
+            let chainId = await getChainId()
+            if (tempChainId != chainId) {
+                tempChainId = chainId
+                const gasPrice0 = await web3.eth.getGasPrice()
+                gasPrice = globalWeb3.utils.fromWei(gasPrice0, 'gwei')
+                setGasPrice(gasPrice)
+                setMaxGasPrice(parseInt(gasPrice * 1.5))
+                setMinGasPrice(parseInt(gasPrice / 3))
+                console.log(gasPrice);
+            }
+
+            console.log("displayGasPrice-chainId", chainId);
+            if (chainId == 56 || chainId == 97) {
+                maxGasPriceUl.style.display = "none";
+                minGasPriceUl.style.display = "none";
+                gasPriceUl.style.display = "block";
+            } else {
+                maxGasPriceUl.style.display = "block";
+                minGasPriceUl.style.display = "block";
+                gasPriceUl.style.display = "none";
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            break
+        }
+    }
+
+
+</script>
+
+</html>
