@@ -172,8 +172,8 @@
                 const gasPrice0 = await web3.eth.getGasPrice()
                 gasPrice = globalWeb3.utils.fromWei(gasPrice0, 'gwei')
                 setGasPrice(gasPrice)
-                setMaxGasPrice(parseInt(gasPrice * 1.5))
-                setMinGasPrice(parseInt(gasPrice / 3))
+                 setMaxGasPrice(parseFloat(gasPrice * 1.5).toFixed(8))
+                setMinGasPrice(parseFloat(gasPrice / 3).toFixed(8))
                 console.log(gasPrice);
             }
 
