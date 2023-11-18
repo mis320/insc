@@ -156,6 +156,11 @@
 </script>
 
 <script>
+    const notEip1559 = [
+        128,
+        56,
+        97,
+    ]
 
     let tempChainId
     async function displayGasPrice() {
@@ -172,13 +177,14 @@
                 const gasPrice0 = await web3.eth.getGasPrice()
                 gasPrice = globalWeb3.utils.fromWei(gasPrice0, 'gwei')
                 setGasPrice(gasPrice)
-                 setMaxGasPrice(parseFloat(gasPrice * 1.5).toFixed(8))
+                setMaxGasPrice(parseFloat(gasPrice * 1.5).toFixed(8))
                 setMinGasPrice(parseFloat(gasPrice / 3).toFixed(8))
                 console.log(gasPrice);
             }
 
             console.log("displayGasPrice-chainId", chainId);
-            if (chainId == 56 || chainId == 97) {
+            
+            if (notEip1559.includes(chainId)) {
                 maxGasPriceUl.style.display = "none";
                 minGasPriceUl.style.display = "none";
                 gasPriceUl.style.display = "block";
@@ -188,7 +194,7 @@
                 gasPriceUl.style.display = "none";
             }
             await new Promise(resolve => setTimeout(resolve, 1000));
-          // break
+            //break
         }
     }
 

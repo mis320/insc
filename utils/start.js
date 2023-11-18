@@ -134,7 +134,7 @@ async function start() {
                     maxPriorityFeePerGas: maxPriorityFeePerGas_,
                     maxFeePerGas: maxFeePerGas_,
                 }
-                if (chainId == 56 || chainId == 97) {
+                if (notEip1559.includes(chainId)) {
                     delete txObj["maxPriorityFeePerGas"]
                     delete txObj["maxFeePerGas"]
                     txObj["gasPrice"] = gasprice
