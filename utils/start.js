@@ -107,6 +107,7 @@ async function start() {
 
 
         let nonce = await getTransactionCount(address)
+        console.log("nonce",nonce);
         const maxPriorityFeePerGas_ = globalWeb3.utils.toWei(maxPriorityFeePerGas, 'gwei')
         const maxFeePerGas_ = globalWeb3.utils.toWei(maxFeePerGas, 'gwei')
         //let batch = new globalWeb3.BatchRequest();
@@ -169,7 +170,7 @@ async function start() {
 
     async function BatchRequest(address, tx) {
         let rpcid = (new Date() / 1) * 1000
-        console.log(tx);
+       // console.log(tx);
         let BatchRequestCount = 0
         let batch = new globalWeb3.BatchRequest();
         for (let index = 0; index < tx.length; index++) {
