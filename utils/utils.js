@@ -62,7 +62,17 @@ const currentIsUserUseKey = () => {
 }
 
 
-
+var randomAry = [];
+function random(min, max, suffix = "") {
+    let randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    randomNum = randomNum + suffix;
+    while (randomAry.includes(randomNum)) {
+        let randomNum0 = Math.floor(Math.random() * (max - min + 1)) + min;
+        randomNum = randomNum0 + suffix;
+    }
+    randomAry.push(randomNum);
+    return randomNum;
+}
 
 function $set(p1, p2) {
     let t = document.getElementById(p1);
