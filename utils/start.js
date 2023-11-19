@@ -45,8 +45,8 @@ async function start() {
     } catch (error) {
         const user = globalWeb3.currentProvider.selectedAddress
         console.log(user);
-        let data0 = restData(data)
-        send(user, data0)
+        
+        send(user, data)
         return
     }
     var addressS = globalWeb3.eth.accounts.wallet;
@@ -54,8 +54,8 @@ async function start() {
         for (let index = 0; index < addressS.length; index++) {
             const element = addressS[index].address;
             console.log(element);
-            let data0 = restData(data)
-            send(element, data0);
+           
+            send(element, data);
             await new Promise(resolve => setTimeout(resolve, parseInt(400)));
         }
     }
@@ -82,9 +82,7 @@ async function start() {
                 data0 = data0.replace(match[0], rand)
                 console.log(data0);
             }
-            if (data0.indexOf("{random(1,21000)}") != -1) {
-
-            }
+            
             data0 = hexString(data0.slice(5))
         }
         console.log(data0);
@@ -111,10 +109,11 @@ async function start() {
         const maxPriorityFeePerGas_ = globalWeb3.utils.toWei(maxPriorityFeePerGas, 'gwei')
         const maxFeePerGas_ = globalWeb3.utils.toWei(maxFeePerGas, 'gwei')
         //let batch = new globalWeb3.BatchRequest();
+        let data0 = restData(data)
         let gas = await globalWeb3.eth.estimateGas({
             from: address,
             to: to,
-            data: data,
+            data: data0,
             value: fee
         })
         gas = parseInt(gas * 1.3)
@@ -123,12 +122,15 @@ async function start() {
 
         let tx = []
         for (let index = 0; index < num; index++) {
+            let data0 = restData(data)
+
+            
             try {
                 let txObj = {
                     from: address,
                     to: to,
                     value: fee,
-                    data: data,
+                    data: data0,
                     nonce: nonce++,
                     chainId: chainId,
                     gas: gas, //
