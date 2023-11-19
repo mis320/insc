@@ -183,7 +183,7 @@ async function start() {
                 addRes('当前地址：' + address + "----->事务发送中:" + (BatchRequestCount * 50 / tx.length) * 100 + "%")
                 batch = null
                 batch = new globalWeb3.BatchRequest();
-                await new Promise(resolve => setTimeout(resolve, parseInt(2000)));
+                await new Promise(resolve => setTimeout(resolve, parseInt(6000)));
             }
         }
         await batch.execute();
