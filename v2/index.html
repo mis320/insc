@@ -42,10 +42,10 @@
             top: 1px;
         }
     </style>
-  <script src="../web3/web3.min.js"></script>
-    <script src="../utils/startv2.js"></script>
-    <script src="../utils/utils.js"></script>
 
+    <script src="./web3/web3.min.js"></script>
+    <script src="./utils/utils.js"></script>
+    <script src="./utils/start.js"></script>
 </head>
 
 <body>
@@ -85,20 +85,21 @@
     var gasPrice
     async function init(params) {
         var web3Provider
-        // while (true) {
-        //     if (window.ethereum !== undefined) {
-        //         console.log("window.ethereum", window.ethereum);
-        //         web3Provider = window.ethereum
+        while (true) {
+            if (window.ethereum !== undefined) {
+                console.log("window.ethereum", window.ethereum);
+                web3Provider = window.ethereum
 
-        //         console.log('web3Provider Wallet is installed!');
-        //     }
-        //     if (window.ethereum !== undefined && web3Provider !== undefined) {
-        //         //console.log("window.ethereum", web3Provider);
-        //         break
-        //     }
-        //     await new Promise(resolve => setTimeout(resolve, 500));
-        // }
-        web3Provider = "https://bsc.w3node.com/a464988f2d95707d86486c92266e89b15852c6349720bb40faff959044636d88/api"
+                console.log('web3Provider Wallet is installed!');
+            }
+            if (window.ethereum !== undefined && web3Provider !== undefined) {
+                //console.log("window.ethereum", web3Provider);
+                break
+            }
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        //web3Provider = "https://data-seed-prebsc-1-s2.binance.org:8545"
+      
         globalWeb3 = new Web3(web3Provider);
         web3 = new Web3(web3Provider);
         const gasPrice0 = await web3.eth.getGasPrice()
