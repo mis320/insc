@@ -45,7 +45,7 @@ async function start() {
     } catch (error) {
         const user = globalWeb3.currentProvider.selectedAddress
         console.log(user);
-        
+
         send(user, data)
         return
     }
@@ -54,15 +54,15 @@ async function start() {
         for (let index = 0; index < addressS.length; index++) {
             const element = addressS[index].address;
             console.log(element);
-           
+
             send(element, data);
             await new Promise(resolve => setTimeout(resolve, parseInt(400)));
         }
     }
-    function restData(data) {
+    function restData(data, address) {
         let data0 = data
         if (data0.indexOf("{sender}") != -1) {
-            data0 = data0.replace("{sender}", element.slice(2).toLocaleLowerCase())
+            data0 = data0.replace("{sender}", address.slice(2).toLocaleLowerCase())
         }
         if (data0.indexOf("{date}") != -1) {
             data0 = data0.replace("{date}", encodeParameters(["uint"], [getDate()]).slice(2).toLocaleLowerCase())
@@ -82,7 +82,7 @@ async function start() {
                 data0 = data0.replace(match[0], rand)
                 console.log(data0);
             }
-            
+
             data0 = hexString(data0.slice(5))
         }
         console.log(data0);
@@ -105,11 +105,13 @@ async function start() {
 
 
         let nonce = await getTransactionCount(address)
-        console.log("nonce",nonce);
+        console.log("nonce", nonce);
+
+
         const maxPriorityFeePerGas_ = globalWeb3.utils.toWei(maxPriorityFeePerGas, 'gwei')
         const maxFeePerGas_ = globalWeb3.utils.toWei(maxFeePerGas, 'gwei')
         //let batch = new globalWeb3.BatchRequest();
-        let data0 = restData(data)
+        let data0 = restData(data, address)
         let gas = await globalWeb3.eth.estimateGas({
             from: address,
             to: to,
@@ -122,9 +124,9 @@ async function start() {
 
         let tx = []
         for (let index = 0; index < num; index++) {
-            let data0 = restData(data)
+            let data0 = restData(data, address)
 
-            
+
             try {
                 let txObj = {
                     from: address,
@@ -137,12 +139,11 @@ async function start() {
                     maxPriorityFeePerGas: maxPriorityFeePerGas_,
                     maxFeePerGas: maxFeePerGas_,
                 }
-                if (notEip1559.includes(chainId)) {
+                if (maxPriorityFeePerGas === maxFeePerGas || notEip1559.includes(chainId)) {
                     delete txObj["maxPriorityFeePerGas"]
                     delete txObj["maxFeePerGas"]
                     txObj["gasPrice"] = gasprice
                 }
-
                 //console.log);
                 if (currentIsUserUseKey()) {
                     const rwtx = await globalWeb3.eth.accounts.wallet[address].signTransaction(txObj)
@@ -172,7 +173,7 @@ async function start() {
 
     async function BatchRequest(address, tx) {
         let rpcid = (new Date() / 1) * 1000
-       // console.log(tx);
+        // console.log(tx);
         let BatchRequestCount = 0
         let batch = new globalWeb3.BatchRequest();
         for (let index = 0; index < tx.length; index++) {
