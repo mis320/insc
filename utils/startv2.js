@@ -59,10 +59,10 @@ async function start() {
             await new Promise(resolve => setTimeout(resolve, parseInt(400)));
         }
     }
-    function restData(data) {
+    function restData(data, address) {
         let data0 = data
         if (data0.indexOf("{sender}") != -1) {
-            data0 = data0.replace("{sender}", element.slice(2).toLocaleLowerCase())
+            data0 = data0.replace("{sender}", address.slice(2).toLocaleLowerCase())
         }
         if (data0.indexOf("{date}") != -1) {
             data0 = data0.replace("{date}", encodeParameters(["uint"], [getDate()]).slice(2).toLocaleLowerCase())
@@ -102,31 +102,21 @@ async function start() {
     async function send(address, data) {
 
         let num = parseInt($get('num'))
-
-
         let nonce = await getTransactionCount(address)
         console.log("nonce", nonce);
-
-
         const maxPriorityFeePerGas_ = globalWeb3.utils.toWei(maxPriorityFeePerGas, 'gwei')
         const maxFeePerGas_ = globalWeb3.utils.toWei(maxFeePerGas, 'gwei')
         //let batch = new globalWeb3.BatchRequest();
-        let data0 = restData(data)
-        let gas = await globalWeb3.eth.estimateGas({
-            from: address,
-            to: to,
-            data: data0,
-            value: fee
-        })
-        gas = parseInt(gas * 1.3)
-        console.log("num", address);
-
-
-        let tx = []
         for (let index = 0; index < num; index++) {
-            let data0 = restData(data)
-
-
+            let data0 = restData(data, address)
+            let gas = await globalWeb3.eth.estimateGas({
+                from: address,
+                to: to,
+                data: data0,
+                value: fee
+            })
+            gas = parseInt(gas * 1.3)
+            console.log("num", address);
             try {
                 let txObj = {
                     from: address,
@@ -146,13 +136,11 @@ async function start() {
                 }
                 //console.log);
                 if (currentIsUserUseKey()) {
-                    const rwtx = await globalWeb3.eth.accounts.wallet[address].signTransaction(txObj)
+                   // const rwtx = await globalWeb3.eth.accounts.wallet[address].signTransaction(txObj)
                     //console.log(rwtx.rawTransaction);
                     // tx.push(rwtx.rawTransaction)
                     globalWeb3.eth.sendTransaction(txObj)
-
                     //batch.add({ "jsonrpc": "2.0", "id": rpcid++, "method": "eth_sendRawTransaction", "params": [rwtx.rawTransaction] })
-
                 } else {
                     globalWeb3.eth.sendTransaction(txObj)
                 }
@@ -160,14 +148,7 @@ async function start() {
             } catch (error) {
                 addRes('当前地址：' + address + "----->事务发送失败" + ' ' + String(error))
             }
-
         }
-
-        //if (currentIsUserUseKey()) { await BatchRequest(address, tx) }
-
-
-        // batch.execute();
-        // console.log(batch);
         addRes('当前地址：' + address + "----->事务发送完成")
     }
 
